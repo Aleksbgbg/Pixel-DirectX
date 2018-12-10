@@ -44,4 +44,27 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 			throw std::runtime_error{ "Could not create D3D device and swapchain" };
 		}
 	}
+
+	// Create render target (backbuffer)
+	{
+		// Retrieve address of backbuffer in swapchain (only one backbuffer enabled)
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> backbuffer;
+		resultHandle = swapchain->GetBuffer(0u, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backbuffer.GetAddressOf()));
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not find backbuffer in swapchain" };
+		}
+
+		// Create render target from backbuffer
+		resultHandle = device->CreateRenderTargetView(backbuffer.Get(), nullptr, renderTargetView.GetAddressOf());
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create render target view from backbuffer" };
+		}
+	}
+
+	// Set the render target to created view
+	deviceContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), nullptr);
 }
