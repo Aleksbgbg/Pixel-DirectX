@@ -192,4 +192,29 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		deviceContext->IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
 	}
+	
+	// Create input layout for quad
+	{
+		const D3D11_INPUT_ELEMENT_DESC inputElementDescription[] =
+		{
+			{ "POSITION", 0u, DXGI_FORMAT_R32G32B32_FLOAT, 0u, 0u, D3D11_INPUT_PER_VERTEX_DATA, 0u },
+			{ "TEXCOORD", 0u, DXGI_FORMAT_R32G32_FLOAT, 0u, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0u }
+		};
+
+		resultHandle = device->CreateInputLayout
+		(
+			inputElementDescription,
+			sizeof(inputElementDescription) / sizeof(D3D11_INPUT_ELEMENT_DESC),
+			Shaders::VertexShaderBytecode,
+			sizeof(Shaders::VertexShaderBytecode),
+			inputLayout.GetAddressOf()
+		);
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create input layout" };
+		}
+
+		deviceContext->IASetInputLayout(inputLayout.Get());
+	}
 }
