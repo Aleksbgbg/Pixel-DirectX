@@ -18,4 +18,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> textureBuffer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureBufferView;
+
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 };

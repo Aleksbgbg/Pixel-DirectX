@@ -3,6 +3,12 @@
 #include <cassert>
 #include <stdexcept>
 
+namespace Shaders
+{
+#include "PixelShader.shh"
+#include "VertexShader.shh"
+}
+
 Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 {
 	assert(windowHandle != nullptr);
@@ -117,5 +123,39 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 		{
 			throw std::runtime_error{ "Could not create view for render target texture" };
 		}
+	}
+
+	// Create and pixel and vertex shaders
+	{
+		resultHandle = device->CreatePixelShader
+		(
+			Shaders::PixelShaderBytecode,
+			sizeof(Shaders::PixelShaderBytecode),
+			nullptr,
+			pixelShader.GetAddressOf()
+		);
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create pixel shader" };
+		}
+
+		resultHandle = device->CreateVertexShader
+		(
+			Shaders::VertexShaderBytecode,
+			sizeof(Shaders::VertexShaderBytecode),
+			nullptr,
+			vertexShader.GetAddressOf()
+		);
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create vertex shader" };
+		}
+
+		deviceContext->PSSetShader(pixelShader.Get(), nullptr, 0u);
+		deviceContext->VSSetShader(vertexShader.Get(), nullptr, 0u);
+
+		deviceContext->PSSetShaderResources(0u, 1u, textureBufferView.GetAddressOf());
 	}
 }
