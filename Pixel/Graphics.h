@@ -13,6 +13,9 @@ public:
 public:
 	~Graphics();
 
+public:
+	void Render() const;
+
 private:
 	struct Vertex
 	{
@@ -39,6 +42,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
+
+	int width;
+	int height;
 
 	Color* buffer = nullptr;
 };

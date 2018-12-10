@@ -10,11 +10,11 @@ namespace Shaders
 }
 
 Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
+	:
+	width{ windowDimensions.right - windowDimensions.left },
+	height{ windowDimensions.bottom - windowDimensions.top }
 {
 	assert(windowHandle != nullptr);
-
-	const int width = windowDimensions.right - windowDimensions.left;
-	const int height = windowDimensions.bottom - windowDimensions.top;
 
 	HRESULT resultHandle;
 
@@ -192,7 +192,7 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		deviceContext->IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
 	}
-	
+
 	// Create input layout for quad
 	{
 		const D3D11_INPUT_ELEMENT_DESC inputElementDescription[] =
@@ -217,7 +217,7 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 
 		deviceContext->IASetInputLayout(inputLayout.Get());
 	}
-	
+
 	// Create sampler state for textured quad
 	{
 		D3D11_SAMPLER_DESC samplerDescription = { };
@@ -249,5 +249,47 @@ Graphics::~Graphics()
 	{
 		_aligned_free(buffer);
 		buffer = nullptr;
+	}
+}
+
+void Graphics::Render() const
+{
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource = { };
+
+	HRESULT resultHandle = deviceContext->Map(textureBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &mappedSubresource);
+
+	if (FAILED(resultHandle))
+	{
+		throw std::runtime_error{ "Could not map texture buffer" };
+	}
+
+	Color* const colorTexture = reinterpret_cast<Color*>(mappedSubresource.pData);
+
+	const size_t sourcePitch = width;
+	const size_t bytesPerRow = sourcePitch * sizeof(Color);
+
+	const size_t destinationPitch = mappedSubresource.RowPitch / sizeof(Color);
+
+	const size_t height = this->height;
+
+	for (size_t y = 0u; y < height; ++y)
+	{
+		memcpy(&colorTexture[y * destinationPitch], &buffer[y * sourcePitch], bytesPerRow);
+	}
+
+	deviceContext->Unmap(textureBuffer.Get(), 0u);
+
+	deviceContext->Draw(6u, 0u);
+
+	resultHandle = swapchain->Present(1u, 0u);
+
+	if (FAILED(resultHandle))
+	{
+		if (resultHandle == DXGI_ERROR_DEVICE_REMOVED)
+		{
+			throw std::runtime_error{ "GPU device removed while presenting backbuffer" };
+		}
+
+		throw std::runtime_error{ "Could not present backbuffer" };
 	}
 }
