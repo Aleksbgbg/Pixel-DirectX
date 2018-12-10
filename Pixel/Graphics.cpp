@@ -9,6 +9,14 @@ namespace Shaders
 #include "VertexShader.shh"
 }
 
+Graphics::Graphics()
+	:
+	width{ 0 },
+	height{ 0 },
+	buffer{ nullptr }
+{
+}
+
 Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 	:
 	width{ windowDimensions.right - windowDimensions.left },
@@ -243,6 +251,39 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 	buffer = reinterpret_cast<Color*>(_aligned_malloc(sizeof(Color) * width * height, 16u));
 }
 
+Graphics::Graphics(Graphics&& source) noexcept
+	:
+	device{ std::move(source.device) },
+	deviceContext{ std::move(source.deviceContext) },
+	swapchain{ std::move(source.swapchain) },
+	renderTargetView{ std::move(source.renderTargetView) },
+	textureBuffer{ std::move(source.textureBuffer) },
+	textureBufferView{ std::move(source.textureBufferView) },
+	pixelShader{ std::move(source.pixelShader) },
+	vertexShader{ std::move(source.vertexShader) },
+	vertexBuffer{ std::move(source.vertexBuffer) },
+	inputLayout{ std::move(source.inputLayout) },
+	samplerState{ std::move(source.samplerState) },
+	width{ source.width },
+	height{ source.height },
+	buffer{ source.buffer }
+{
+	source.device = nullptr;
+	source.deviceContext = nullptr;
+	source.swapchain = nullptr;
+	source.renderTargetView = nullptr;
+	source.textureBuffer = nullptr;
+	source.textureBufferView = nullptr;
+	source.pixelShader = nullptr;
+	source.vertexShader = nullptr;
+	source.vertexBuffer = nullptr;
+	source.inputLayout = nullptr;
+	source.samplerState = nullptr;
+	source.width = 0;
+	source.height = 0;
+	source.buffer = nullptr;
+}
+
 Graphics::~Graphics()
 {
 	if (buffer != nullptr)
@@ -250,6 +291,43 @@ Graphics::~Graphics()
 		_aligned_free(buffer);
 		buffer = nullptr;
 	}
+}
+
+Graphics& Graphics::operator=(Graphics&& source) noexcept
+{
+	assert(this != &source);
+
+	device = std::move(source.device);
+	deviceContext = std::move(source.deviceContext);
+	swapchain = std::move(source.swapchain);
+	renderTargetView = std::move(source.renderTargetView);
+	textureBuffer = std::move(source.textureBuffer);
+	textureBufferView = std::move(source.textureBufferView);
+	pixelShader = std::move(source.pixelShader);
+	vertexShader = std::move(source.vertexShader);
+	vertexBuffer = std::move(source.vertexBuffer);
+	inputLayout = std::move(source.inputLayout);
+	samplerState = std::move(source.samplerState);
+	width = source.width;
+	height = source.height;
+	buffer = source.buffer;
+
+	source.device = nullptr;
+	source.deviceContext = nullptr;
+	source.swapchain = nullptr;
+	source.renderTargetView = nullptr;
+	source.textureBuffer = nullptr;
+	source.textureBufferView = nullptr;
+	source.pixelShader = nullptr;
+	source.vertexShader = nullptr;
+	source.vertexBuffer = nullptr;
+	source.inputLayout = nullptr;
+	source.samplerState = nullptr;
+	source.width = 0;
+	source.height = 0;
+	source.buffer = nullptr;
+
+	return *this;
 }
 
 void Graphics::Clear() const

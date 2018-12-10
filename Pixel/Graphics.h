@@ -8,10 +8,19 @@
 class Graphics
 {
 public:
+	Graphics();
+
 	Graphics(HWND windowHandle, const RECT windowDimensions);
+
+	Graphics(const Graphics&) = delete;
+	Graphics(Graphics&& source) noexcept;
 
 public:
 	~Graphics();
+
+public:
+	Graphics& operator=(const Graphics&) = delete;
+	Graphics& operator=(Graphics&& source) noexcept;
 
 public:
 	void Clear() const;
@@ -50,5 +59,5 @@ private:
 	int width;
 	int height;
 
-	Color* buffer = nullptr;
+	Color* buffer;
 };
