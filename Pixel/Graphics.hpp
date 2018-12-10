@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include <wrl.h>
 
-#include "Color.h"
+#include "Color.hpp"
 
 namespace Px
 {
