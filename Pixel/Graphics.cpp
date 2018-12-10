@@ -34,7 +34,6 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 		swapchainDescription.BufferDesc.Width = width;
 		swapchainDescription.BufferDesc.Height = height;
 		swapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapchainDescription.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		swapchainDescription.OutputWindow = windowHandle;
 		swapchainDescription.SampleDesc.Count = 1;
 		swapchainDescription.SampleDesc.Quality = 0;
