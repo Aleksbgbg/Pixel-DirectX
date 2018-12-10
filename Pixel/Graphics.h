@@ -32,4 +32,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerState;
 };

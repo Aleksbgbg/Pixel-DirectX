@@ -217,4 +217,25 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 
 		deviceContext->IASetInputLayout(inputLayout.Get());
 	}
+	
+	// Create sampler state for textured quad
+	{
+		D3D11_SAMPLER_DESC samplerDescription = { };
+		samplerDescription.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		samplerDescription.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDescription.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDescription.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDescription.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		samplerDescription.MinLOD = 0.0f;
+		samplerDescription.MaxLOD = D3D11_FLOAT32_MAX;
+
+		resultHandle = device->CreateSamplerState(&samplerDescription, samplerState.GetAddressOf());
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create sampler state" };
+		}
+
+		deviceContext->PSSetSamplers(0u, 1u, samplerState.GetAddressOf());
+	}
 }
