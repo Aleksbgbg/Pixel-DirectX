@@ -17,6 +17,9 @@ public:
 	void Clear() const;
 	void Render() const;
 
+	void PutPixel(const int x, const int y, const Color color) const;
+	void PutPixel(const int x, const int y, const unsigned char red, const unsigned char green, const unsigned char blue) const;
+
 private:
 	struct Vertex
 	{
