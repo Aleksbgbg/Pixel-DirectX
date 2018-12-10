@@ -9,6 +9,13 @@ public:
 	Graphics(HWND windowHandle, const RECT windowDimensions);
 
 private:
+	struct Vertex
+	{
+		float x, y, z;	// position
+		float u, v;		// texcoord
+	};
+
+private:
 	Microsoft::WRL::ComPtr<ID3D11Device> device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext;
 
@@ -21,4 +28,6 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 };

@@ -158,4 +158,38 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 
 		deviceContext->PSSetShaderResources(0u, 1u, textureBufferView.GetAddressOf());
 	}
+
+	// Create vertex buffer with rendering quad
+	{
+		const Vertex renderQuad[] =
+		{
+			{ -1.0f,  1.0f, 0.5f, 0.0f, 0.0f },
+			{  1.0f,  1.0f, 0.5f, 1.0f, 0.0f },
+			{  1.0f, -1.0f, 0.5f, 1.0f, 1.0f },
+			{ -1.0f,  1.0f, 0.5f, 0.0f, 0.0f },
+			{  1.0f, -1.0f, 0.5f, 1.0f, 1.0f },
+			{ -1.0f, -1.0f, 0.5f, 0.0f, 1.0f }
+		};
+
+		D3D11_BUFFER_DESC bufferDescription = { };
+		bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDescription.ByteWidth = sizeof(renderQuad);
+		bufferDescription.Usage = D3D11_USAGE_DEFAULT;
+
+		D3D11_SUBRESOURCE_DATA subresourceData = { };
+		subresourceData.pSysMem = renderQuad;
+
+		resultHandle = device->CreateBuffer(&bufferDescription, &subresourceData, vertexBuffer.GetAddressOf());
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create vertex buffer" };
+		}
+
+		const UINT stride = sizeof(Vertex);
+		const UINT offset = 0u;
+
+		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		deviceContext->IASetVertexBuffers(0u, 1u, vertexBuffer.GetAddressOf(), &stride, &offset);
+	}
 }
