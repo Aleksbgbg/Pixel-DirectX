@@ -7,10 +7,19 @@
 class Window
 {
 public:
+	Window();
+
 	Window(HINSTANCE programInstanceHandle, const char* windowClassName, const char* windowName, RECT dimensions);
+
+	Window(const Window&) = delete;
+	Window(Window&& source) noexcept;
 
 public:
 	~Window();
+
+public:
+	Window& operator=(const Window&) = delete;
+	Window& operator=(Window&& source) noexcept;
 
 public:
 	void Show() const;

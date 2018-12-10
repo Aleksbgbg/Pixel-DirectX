@@ -3,11 +3,21 @@
 #include <cassert>
 #include <stdexcept>
 
+Window::Window()
+	:
+	programInstanceHandle{ nullptr },
+	windowClassName{ nullptr },
+	dimensions{ },
+	handle{ nullptr }
+{
+}
+
 Window::Window(HINSTANCE programInstanceHandle, const char* windowClassName, const char* windowName, RECT dimensions)
 	:
 	programInstanceHandle{ programInstanceHandle },
 	windowClassName{ windowClassName },
-	dimensions{ 0 }
+	dimensions{ },
+	handle{ nullptr }
 {
 	WNDCLASS windowClass = { };
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -47,9 +57,51 @@ Window::Window(HINSTANCE programInstanceHandle, const char* windowClassName, con
 	this->dimensions = dimensions;
 }
 
+Window::Window(Window&& source) noexcept
+	:
+	programInstanceHandle{ source.programInstanceHandle },
+	windowClassName{ source.windowClassName },
+	dimensions{ source.dimensions },
+	handle{ source.handle }
+{
+	source.programInstanceHandle = nullptr;
+	source.windowClassName = nullptr;
+	source.dimensions = { };
+	source.handle = nullptr;
+}
+
 Window::~Window()
 {
-	UnregisterClass(windowClassName, programInstanceHandle);
+	if (handle != nullptr)
+	{
+		DestroyWindow(handle);
+		handle = nullptr;
+	}
+
+	if (windowClassName != nullptr)
+	{
+		UnregisterClass(windowClassName, programInstanceHandle);
+
+		programInstanceHandle = nullptr;
+		windowClassName = nullptr;
+	}
+}
+
+Window& Window::operator=(Window&& source) noexcept
+{
+	assert(this != &source);
+
+	programInstanceHandle = source.programInstanceHandle;
+	windowClassName = source.windowClassName;
+	dimensions = source.dimensions;
+	handle = source.handle;
+
+	source.programInstanceHandle = nullptr;
+	source.windowClassName = nullptr;
+	source.dimensions = { };
+	source.handle = nullptr;
+
+	return *this;
 }
 
 void Window::Show() const
@@ -73,8 +125,8 @@ LRESULT Window::CreateWindowProcedure(HWND windowHandle, const UINT message, con
 
 		assert(window != nullptr);
 
-		SetWindowLongPtr(windowHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&DefaultWindowProcedure));
 		SetWindowLongPtr(windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
+		SetWindowLongPtr(windowHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&DefaultWindowProcedure));
 
 		return window->HandleMessage(windowHandle, message, wparam, lparam);
 	}
