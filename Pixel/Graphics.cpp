@@ -7,6 +7,9 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 {
 	assert(windowHandle != nullptr);
 
+	const int width = windowDimensions.right - windowDimensions.left;
+	const int height = windowDimensions.bottom - windowDimensions.top;
+
 	HRESULT resultHandle;
 
 	// Create D3D device and swapchain
@@ -14,8 +17,8 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 		DXGI_SWAP_CHAIN_DESC  swapchainDescription = { };
 		swapchainDescription.BufferCount = 1;
 		swapchainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		swapchainDescription.BufferDesc.Width = windowDimensions.right - windowDimensions.left;
-		swapchainDescription.BufferDesc.Height = windowDimensions.bottom - windowDimensions.top;
+		swapchainDescription.BufferDesc.Width = width;
+		swapchainDescription.BufferDesc.Height = height;
 		swapchainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapchainDescription.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 		swapchainDescription.OutputWindow = windowHandle;
@@ -67,4 +70,17 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 
 	// Set the render target to created view
 	deviceContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), nullptr);
+
+	// Create viewport dimensions
+	{
+		D3D11_VIEWPORT viewport;
+		viewport.Width = static_cast<float>(width);
+		viewport.Height = static_cast<float>(height);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+
+		deviceContext->RSSetViewports(1, &viewport);
+	}
 }
