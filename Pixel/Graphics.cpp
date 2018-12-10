@@ -83,4 +83,39 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 
 		deviceContext->RSSetViewports(1, &viewport);
 	}
+
+	// Create render target texture
+	{
+		D3D11_TEXTURE2D_DESC textureDescription;
+		textureDescription.Width = width;
+		textureDescription.Height = height;
+		textureDescription.MipLevels = 1u;
+		textureDescription.ArraySize = 1u;
+		textureDescription.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDescription.SampleDesc.Count = 1u;
+		textureDescription.SampleDesc.Quality = 0u;
+		textureDescription.Usage = D3D11_USAGE_DYNAMIC;
+		textureDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		textureDescription.MiscFlags = 0u;
+
+		resultHandle = device->CreateTexture2D(&textureDescription, nullptr, textureBuffer.GetAddressOf());
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create render target texture" };
+		}
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDescription = { };
+		shaderResourceViewDescription.Format = textureDescription.Format;
+		shaderResourceViewDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDescription.Texture2D.MipLevels = textureDescription.MipLevels;
+
+		resultHandle = device->CreateShaderResourceView(textureBuffer.Get(), &shaderResourceViewDescription, textureBufferView.GetAddressOf());
+
+		if (FAILED(resultHandle))
+		{
+			throw std::runtime_error{ "Could not create view for render target texture" };
+		}
+	}
 }
