@@ -252,6 +252,11 @@ Graphics::~Graphics()
 	}
 }
 
+void Graphics::Clear() const
+{
+	memset(buffer, 0u, sizeof(Color) * width * height);
+}
+
 void Graphics::Render() const
 {
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource = { };

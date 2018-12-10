@@ -14,6 +14,7 @@ public:
 	~Graphics();
 
 public:
+	void Clear() const;
 	void Render() const;
 
 private:
