@@ -10,6 +10,9 @@ public:
 public:
 	~Window();
 
+public:
+	void Show() const;
+
 private:
 	HINSTANCE programInstanceHandle;
 	const char* windowClassName;

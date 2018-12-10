@@ -46,3 +46,8 @@ Window::~Window()
 {
 	UnregisterClass(windowClassName, programInstanceHandle);
 }
+
+void Window::Show() const
+{
+	ShowWindow(handle, SW_SHOW);
+}
