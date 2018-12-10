@@ -238,4 +238,16 @@ Graphics::Graphics(HWND windowHandle, const RECT windowDimensions)
 
 		deviceContext->PSSetSamplers(0u, 1u, samplerState.GetAddressOf());
 	}
+
+	// Allocate color buffer (16-byte aligned for fast access)
+	buffer = reinterpret_cast<Color*>(_aligned_malloc(sizeof(Color) * width * height, 16u));
+}
+
+Graphics::~Graphics()
+{
+	if (buffer != nullptr)
+	{
+		_aligned_free(buffer);
+		buffer = nullptr;
+	}
 }
