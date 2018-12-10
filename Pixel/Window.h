@@ -4,6 +4,8 @@
 
 #include "Graphics.h"
 
+namespace Px
+{
 class Window
 {
 public:
@@ -39,3 +41,4 @@ private:
 	RECT dimensions;
 	HWND handle;
 };
+}

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Px
+{
 class Color
 {
 public:
@@ -77,3 +79,4 @@ public:
 private:
 	unsigned int value;
 };
+}

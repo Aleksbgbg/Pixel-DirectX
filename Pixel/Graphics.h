@@ -5,6 +5,8 @@
 
 #include "Color.h"
 
+namespace Px
+{
 class Graphics
 {
 public:
@@ -61,3 +63,4 @@ private:
 
 	Color* buffer;
 };
+}

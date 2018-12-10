@@ -9,6 +9,8 @@ namespace Shaders
 #include "VertexShader.shh"
 }
 
+namespace Px
+{
 Graphics::Graphics()
 	:
 	width{ 0 },
@@ -384,4 +386,5 @@ void Graphics::PutPixel(const int x, const int y, const Color color) const
 void Graphics::PutPixel(const int x, const int y, const unsigned char red, const unsigned char green, const unsigned char blue) const
 {
 	PutPixel(x, y, Color{ red, green, blue });
+}
 }

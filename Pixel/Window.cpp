@@ -3,6 +3,8 @@
 #include <cassert>
 #include <stdexcept>
 
+namespace Px
+{
 Window::Window()
 	:
 	programInstanceHandle{ nullptr },
@@ -158,4 +160,5 @@ LRESULT Window::HandleMessage(HWND windowHandle, const UINT message, const WPARA
 	}
 
 	return 0;
+}
 }
