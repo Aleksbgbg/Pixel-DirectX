@@ -6,7 +6,8 @@
 Window::Window(HINSTANCE programInstanceHandle, const char* windowClassName, const char* windowName, RECT dimensions)
 	:
 	programInstanceHandle{ programInstanceHandle },
-	windowClassName{ windowClassName }
+	windowClassName{ windowClassName },
+	dimensions{ 0 }
 {
 	WNDCLASS windowClass = { };
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -42,6 +43,8 @@ Window::Window(HINSTANCE programInstanceHandle, const char* windowClassName, con
 	{
 		throw std::runtime_error{ "Could not create window" };
 	}
+
+	this->dimensions = dimensions;
 }
 
 Window::~Window()
@@ -52,6 +55,11 @@ Window::~Window()
 void Window::Show() const
 {
 	ShowWindow(handle, SW_SHOW);
+}
+
+Graphics Window::LoadGraphics() const
+{
+	return Graphics{ handle, dimensions };
 }
 
 LRESULT Window::CreateWindowProcedure(HWND windowHandle, const UINT message, const WPARAM wparam, const LPARAM lparam)

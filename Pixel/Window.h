@@ -2,6 +2,8 @@
 
 #include <Windows.h>
 
+#include "Graphics.h"
+
 class Window
 {
 public:
@@ -13,6 +15,8 @@ public:
 public:
 	void Show() const;
 
+	Graphics LoadGraphics() const;
+
 private:
 	static LRESULT __stdcall CreateWindowProcedure(HWND windowHandle, const UINT message, const WPARAM wparam, const LPARAM lparam);
 	static LRESULT __stdcall DefaultWindowProcedure(HWND windowHandle, const UINT message, const WPARAM wparam, const LPARAM lparam);
@@ -23,5 +27,6 @@ private:
 private:
 	HINSTANCE programInstanceHandle;
 	const char* windowClassName;
+	RECT dimensions;
 	HWND handle;
 };
